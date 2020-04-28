@@ -1,0 +1,50 @@
+swagger: '2.0'
+info:
+  version: '0.3.0'
+  title: Music API
+  
+host: pi.muzicplayz.com
+basePath: /v3
+schemes: 
+  - https
+
+paths:
+  /playlist:
+    get:
+      #Query parameters
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          
+        - name: offset
+          in: query
+          required: false
+          type: integer
+        
+        - name: search
+          in: query
+          required: false
+          type: string
+          
+      responses:
+        #response code
+        200:
+          description: Successful response
+          
+  /playlist/{playlist-id}:
+    delete:
+      parameters:
+        - name: playlist-id
+          in: path
+          required: true
+          type: string
+          
+      responses:
+        #response code
+        200:
+          description: Successful response
+          
+    
+  
