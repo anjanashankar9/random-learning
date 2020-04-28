@@ -1,0 +1,109 @@
+swagger: '2.0'
+info:
+  version: '0.3.0'
+  title: Music API
+  
+host: pi.muzicplayz.com
+basePath: /v3
+schemes: 
+  - https
+
+paths:
+  /playlist:
+    get:
+      #Query parameters
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          
+        - name: offset
+          in: query
+          required: false
+          type: integer
+        
+        - name: search
+          in: query
+          required: false
+          type: string
+          
+      responses:
+        #response code
+        200:
+          description: Successful response
+          
+    post:
+      parameters: 
+        - name: newPlaylist
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/newPlaylist'
+            
+      responses:
+        #response code
+        200:
+          description: Successful response
+    
+          
+  /playlist/{playlist-id}:
+    delete:
+      parameters:
+        - name: playlist-id
+          in: path
+          required: true
+          type: string
+          
+      responses:
+        #response code
+        200:
+          description: Successful response
+          
+    get:
+      parameters:
+        - name: playlist-id
+          in: path
+          required: true
+          type: string
+          
+      responses:
+        #response code
+        200:
+          description: Successful response
+          schema:
+            $ref: '#/definitions/playlistWithSongs'
+    
+          
+
+definitions:
+  newPlaylist:
+    properties:
+      name:
+        type: string
+      songIds:
+        type: array
+        items:
+          type: integer
+    required:
+      - name
+      
+  playlistWithSongs:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      songs:
+        type: array
+        items:
+          $ref: '#/definitions/song'
+          
+  song:
+    properties:
+      id:
+        type: integer
+      title:
+        type: string
+      artist:
+        type: string
