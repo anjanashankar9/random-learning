@@ -1,0 +1,162 @@
+swagger: '2.0'
+info:
+  version: '0.3.0'
+  title: Music API
+  
+host: pi.muzicplayz.com
+basePath: /v3
+schemes: 
+  - https
+  
+consumes:
+  - application/json
+
+produces:
+  - application/json
+
+paths:
+  /playlist:
+    get:
+      #Query parameters
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          
+        - name: offset
+          in: query
+          required: false
+          type: integer
+        
+        - name: search
+          in: query
+          required: false
+          type: string
+          
+      responses:
+        #response code
+        200:
+          description: Successful response
+          
+    post:
+      parameters: 
+        - name: newPlaylist
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/newPlaylist'
+      
+      security:
+        - basicAuth: [ ]
+            
+      responses:
+        #response code
+        200:
+          description: Successful response
+    
+          
+  /playlist/{playlist-id}:
+    delete:
+      parameters:
+        - name: playlist-id
+          in: path
+          required: true
+          type: string
+          
+      security:
+        - basicAuth: [ ]
+          
+      responses:
+        #response code
+        200:
+          description: Successful response
+          
+        410:
+          description: Playlist already deleted
+          schema:
+            $ref: '#/definitions/error'
+          
+    get:
+      parameters:
+        - name: playlist-id
+          in: path
+          required: true
+          type: string
+          
+      security:
+        - basicAuth: [ ]
+          
+      responses:
+        #response code
+        200:
+          description: Successful response
+          schema:
+            $ref: '#/definitions/playlistWithSongs'
+    
+  /playlists/{playlist-id}/image:
+    get:
+      operationId: getImage
+      parameters:
+        - name: playlist-id
+          in: path
+          type: string
+          required: true
+          
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: file
+            
+      produces:
+        - image/png
+
+definitions:
+  newPlaylist:
+    properties:
+      name:
+        type: string
+      songIds:
+        type: array
+        items:
+          type: integer
+    required:
+      - name
+      
+  playlistWithSongs:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+      songs:
+        type: array
+        items:
+          $ref: '#/definitions/song'
+          
+  song:
+    properties:
+      id:
+        type: integer
+      title:
+        type: string
+      artist:
+        type: string
+        
+  error:
+    properties:
+      errorMessage:
+        type: string
+      logData:
+        type: object
+        properties:
+          entry:
+            type: integer
+          date:
+            type: string
+    
+        
+securityDefinitions:
+  basicAuth:
+    type: basic
