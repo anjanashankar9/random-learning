@@ -1,0 +1,195 @@
+swagger: '2.0'
+info:
+  description: "Music API with playlists"
+  version: '0.3.0'
+  title: Music API
+  
+host: pi.muzicplayz.com
+basePath: /v3
+schemes: 
+  - https
+  
+consumes:
+  - application/json
+
+produces:
+  - application/json
+
+paths:
+  /playlist:
+    get:
+      operationId: getplaylist
+      description: “Returns one or more playlists
+      #Query parameters
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          type: integer
+          description: Number of playlists that need to be returned.
+          
+        - name: offset
+          in: query
+          required: false
+          type: integer
+          description: Returns playlists starting from this position.
+        
+        - name: search
+          in: query
+          required: false
+          type: string
+          description: Search term.
+          
+      responses:
+        #response code
+        200:
+          description: Successful response
+          
+    post:
+      operationId: postplaylist
+      description: Creates a new Playlist.
+      parameters: 
+        - name: newPlaylist
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/newPlaylist'
+          description: New playlist.
+      
+      security:
+        - basicAuth: [ ]
+            
+      responses:
+        #response code
+        200:
+          description: Successful response
+    
+          
+  /playlist/{playlist-id}:
+    delete:
+      operationId: deleteplaylist
+      description: Deletes a playlist with the given id.
+      parameters:
+        - name: playlist-id
+          in: path
+          required: true
+          type: string
+          description: Id of the playlist to be deleted.
+          
+      security:
+        - basicAuth: [ ]
+          
+      responses:
+        #response code
+        200:
+          description: Successful response
+          
+        410:
+          description: Playlist already deleted
+          schema:
+            $ref: '#/definitions/error'
+          
+    get:
+      operationId: getplaylistid
+      description: Returns the playlist with the given id.
+      parameters:
+        - name: playlist-id
+          in: path
+          required: true
+          type: string
+          description: Id of the playlist.
+          
+      security:
+        - basicAuth: [ ]
+          
+      responses:
+        #response code
+        200:
+          description: Successful response
+          schema:
+            $ref: '#/definitions/playlistWithSongs'
+    
+  /playlists/{playlist-id}/image:
+    get:
+      operationId: getplaylistimage
+      description: Gets an image for the playlist with given id.
+      operationId: getImage
+      parameters:
+        - name: playlist-id
+          in: path
+          type: string
+          required: true
+          description: Id of the playlist.
+          
+      responses:
+        200:
+          description: Successful response
+          schema:
+            type: file
+            
+      produces:
+        - image/png
+
+definitions:
+  newPlaylist:
+    description: New playlist
+    properties:
+      name:
+        type: string
+        description: Name of the playlist.
+      songIds:
+        type: array
+        description: Ids of the songs in the playlist
+        items:
+          type: integer
+    required:
+      - name
+      
+  playlistWithSongs:
+    properties:
+      id:
+        type: integer
+        description: Id of the playlist
+      name:
+        type: string
+        description: Name of the playlist
+      songs:
+        type: array
+        description: Song in the playlist.
+        items:
+          $ref: '#/definitions/song'
+          
+  song:
+    description: Song information.
+    properties:
+      id:
+        type: integer
+        description: Id of the song.
+      title:
+        type: string
+        description: Song title.
+      artist:
+        type: string
+        description: Song artist.
+  
+  error:
+    properties:
+      errorMessage:
+        type: string
+        description: Human readable error message.
+      logData:
+        type: object
+        description: Data that appears in the log when an error occurs.
+        properties:
+          entry:
+            type: integer
+            description: Log entry number.
+          date:
+            type: string
+            description: Log entry date.
+    
+        
+securityDefinitions:
+  basicAuth:
+    type: basic
+    description: Username and password authentication.
